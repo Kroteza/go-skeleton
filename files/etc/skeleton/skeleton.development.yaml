@@ -1,0 +1,5 @@
+server:
+    port: ":9999"
+database:
+    master: "ADF:d3v3l0p8015@tcp(34.87.44.167:3306)/testing?parseTime=true"
+    
