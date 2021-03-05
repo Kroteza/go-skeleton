@@ -41,7 +41,7 @@ var (
 		{getDataByID, qGetDataByID},
 	}
 )
-//test asd asdadwad
+//test
 
 // New returns data instance
 func New(db *sqlx.DB) Data {
