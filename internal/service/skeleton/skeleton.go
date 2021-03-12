@@ -12,6 +12,10 @@ import (
 type Data interface {
 	GetAllData(ctx context.Context) ([]testingEntity.Testing, error)
 	GetDataByID(ctx context.Context, ID string) (testingEntity.Testing, error)
+	GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error)
+	GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error)
+	InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error
+	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error
 }
 
 // Service ...
@@ -46,4 +50,42 @@ func (s Service) GetDataByID(ctx context.Context, ID string) (testingEntity.Test
 		return hasil, errors.Wrap(err, "[SERVICE][SKELETON][GetDataByID]")
 	}
 	return hasil, err
+}
+
+// GetDataByAge ...
+func (s Service) GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error) {
+
+	hasil, err := s.data.GetDataByAge(ctx, Age)
+	if err != nil{
+		return hasil, errors.Wrap(err, "[SERVICE][SKELETON][GetDataByAge]")
+	}
+	return hasil, err
+}
+
+// GetDataByBalance ...
+func (s Service) GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error) {
+
+	hasil, err := s.data.GetDataByBalance(ctx, Balance)
+	if err != nil{
+		return hasil, errors.Wrap(err, "[SERVICE][SKELETON][GetDataByBalance]")
+	}
+	return hasil, err
+}
+
+// InsertDataUser ...
+func(s Service) InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error{
+	err:= s.data.InsertDataUser(ctx, singleTesting)
+	if err != nil{
+		return errors.Wrap(err, "[SERVICE][SKELETON][InsertDataUser]")
+	}
+	return err
+}
+
+// UpdateDataUser ...
+func(s Service) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error{
+	err:= s.data.UpdateDataUser(ctx, singleTesting)
+	if err != nil{
+		return errors.Wrap(err, "[SERVICE][SKELETON][UpdateDataUser]")
+	}
+	return err
 }

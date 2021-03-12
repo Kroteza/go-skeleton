@@ -1,6 +1,8 @@
 package skeleton
 
 import (
+	"io/ioutil"
+	"encoding/json"
 	"context"
 	"errors"
 	"log"
@@ -15,6 +17,10 @@ import (
 type ISkeletonSvc interface {
 	GetAllData(ctx context.Context) ([]testingEntity.Testing, error)
 	GetDataByID(ctx context.Context, ID string) (testingEntity.Testing, error)
+	GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error)
+	GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error)
+	InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error)
+	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error)
 }
 
 type (
@@ -42,6 +48,7 @@ func (h *Handler) SkeletonHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	resp = &response.Response{}
+	body, _ := ioutil.ReadAll(r.Body)
 	defer resp.RenderJSON(w, r)
 
 
@@ -56,13 +63,37 @@ func (h *Handler) SkeletonHandler(w http.ResponseWriter, r *http.Request) {
 			case "GetAllData":
 				result, err = h.skeletonSvc.GetAllData(context.Background())
 			case "GetDataByID":
-				result, err = h.skeletonSvc.GetDataByID(context.Background(), r.FormValue("ID"))	
+				result, err = h.skeletonSvc.GetDataByID(context.Background(), r.FormValue("ID"))
+			case "GetDataByAge":
+				result, err = h.skeletonSvc.GetDataByAge(context.Background(), r.FormValue("Age"))
+			case "GetDataByBalance":
+				result, err = h.skeletonSvc.GetDataByBalance(context.Background(), r.FormValue("Balance"))	
 			}
 	// Check if request method is POST
 	case http.MethodPost:
+		var _type string
+		if _, postOK := r.URL.Query()["typePost"]; postOK{
+			_type = r.FormValue("typePost")
+		}
+		switch _type{
+			case "InsertDataUser":
+				var dataUser testingEntity.Testing
+				json.Unmarshal(body, &dataUser)
+				err = h.skeletonSvc.InsertDataUser(context.Background(), dataUser)	
+		}
 	
 	// Check if request method is PUT
 	case http.MethodPut:
+		var _type string
+		if _, putOK := r.URL.Query()["typePut"]; putOK{
+			_type = r.FormValue("typePut")
+		}
+		switch _type{
+			case "UpdateDataUser":
+				var dataUser testingEntity.Testing
+				json.Unmarshal(body, &dataUser)
+				err = h.skeletonSvc.UpdateDataUser(context.Background(), dataUser)	
+		}
 
 	// Check if request method is DELETE
 	case http.MethodDelete:

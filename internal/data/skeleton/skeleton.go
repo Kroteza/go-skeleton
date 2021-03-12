@@ -32,6 +32,19 @@ const (
 	qGetDataByID = `SELECT * FROM testing_tsepty
 					WHERE ID = ?`
 				//	IFNULL(Nama, "kosong")AS Nama IFNULL(Nama, 0)AS Nama
+	getDataByAge = `GetDataByAge`
+	qGetDataByAge = `SELECT * FROM testing_tsepty
+					 WHERE Age = ?`
+	
+	getDataByBalance = `GetDataByBalance`
+	qGetDataByBalance = `SELECT * FROM testing_tsepty
+						WHERE Balance = ?`
+	insertDataUser =`InsertDatauser`
+	qInsertDataUser = `INSERT INTO testing_tsepty VALUES(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+				//INSERT INTO (TABLE NAME) VALUES(COLUMN1, COLUMN2, ...)
+	
+	updateDataUser = `UpdateDatauser`
+	qUpdateDataUser = `UPDATE testqlx.Stmt`
 )
 
 // Add queries to key value order to be initialized as prepared statements
@@ -39,6 +52,11 @@ var (
 	readStmt = []statement{
 		{getAllData, qGetAllData},
 		{getDataByID, qGetDataByID},
+		{getDataByAge, qGetDataByAge},
+		{getDataByBalance, qGetDataByBalance},
+		{insertDataUser, qInsertDataUser},
+		{updateDataUser, qUpdateDataUser},
+	
 	}
 )
 //test
@@ -108,4 +126,53 @@ func (d Data) GetDataByID(ctx context.Context, ID string) (testingEntity.Testing
 	
 return singleTesting, err
 
+}
+
+// GetDataByAge ...
+func (d Data) GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error) {
+	var singleTesting testingEntity.Testing
+
+	err := d.stmt[getDataByAge].QueryRowxContext(ctx, Age).StructScan(&singleTesting)
+	if err != nil{
+		return singleTesting, errors.Wrap(err, "[DATA][SKELETON][GetDataByAge]")
+	}
+
+return singleTesting, err
+}
+
+// GetDataByBalance ...
+func (d Data) GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error) {
+	var singleTesting testingEntity.Testing
+
+	err := d.stmt[getDataByBalance].QueryRowxContext(ctx, Balance).StructScan(&singleTesting)
+	if err != nil{
+		return singleTesting, errors.Wrap(err, "[DATA][SKELETON][GetDataByBalance]")
+	}
+	singleTesting.ID = "P100011"
+	singleTesting.Age = 24
+	singleTesting.BalanceAfterTax =+ singleTesting.Balance * 100
+	singleTesting.Description = "beneran ini pajaknya?"
+	return singleTesting, err
+}
+
+//InsertDataUser ...
+func (d Data) InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error{
+	_, err:= d.stmt[insertDataUser].ExecContext(ctx,
+		singleTesting.ID,
+		singleTesting.Nama,
+		singleTesting.Age,
+		singleTesting.Balance,
+		singleTesting.BalanceAfterTax,
+		singleTesting.Description,
+	)
+	return err
+}
+
+// UpdateDataUser ...
+func (d Data) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error {
+	_, err:= d.stmt[updateDataUser].ExecContext(ctx,
+	singleTesting.Nama,
+	singleTesting.Age,
+	)
+	return err
 }
