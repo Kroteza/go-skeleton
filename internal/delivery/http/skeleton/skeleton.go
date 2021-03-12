@@ -19,8 +19,9 @@ type ISkeletonSvc interface {
 	GetDataByID(ctx context.Context, ID string) (testingEntity.Testing, error)
 	GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error)
 	GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error)
-	InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error)
-	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error)
+	InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error
+	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) (testingEntity.Testing, error)
+	DeleteDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) error
 }
 
 type (
@@ -92,11 +93,21 @@ func (h *Handler) SkeletonHandler(w http.ResponseWriter, r *http.Request) {
 			case "UpdateDataUser":
 				var dataUser testingEntity.Testing
 				json.Unmarshal(body, &dataUser)
-				err = h.skeletonSvc.UpdateDataUser(context.Background(), dataUser)	
+				result, err = h.skeletonSvc.UpdateDataUser(context.Background(),dataUser, r.FormValue("ID"))	
 		}
 
 	// Check if request method is DELETE
 	case http.MethodDelete:
+		var _type string
+		if _, deleteOK := r.URL.Query()["typeDelete"]; deleteOK{
+			_type = r.FormValue("typeDelete")
+		}
+		switch _type{
+			case "DeleteDataUser":
+				var dataUser testingEntity.Testing
+				json.Unmarshal(body, &dataUser)
+				err = h.skeletonSvc.DeleteDataUser(context.Background(),dataUser, r.FormValue("ID"))	
+		}
 
 	default:
 		err = errors.New("400")

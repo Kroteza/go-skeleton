@@ -15,7 +15,8 @@ type Data interface {
 	GetDataByAge(ctx context.Context, Age string) (testingEntity.Testing, error)
 	GetDataByBalance(ctx context.Context, Balance string) (testingEntity.Testing, error)
 	InsertDataUser(ctx context.Context, singleTesting testingEntity.Testing) error
-	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error
+	UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) (testingEntity.Testing, error)
+	DeleteDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) error
 }
 
 // Service ...
@@ -82,10 +83,19 @@ func(s Service) InsertDataUser(ctx context.Context, singleTesting testingEntity.
 }
 
 // UpdateDataUser ...
-func(s Service) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error{
-	err:= s.data.UpdateDataUser(ctx, singleTesting)
+func(s Service) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) (testingEntity.Testing, error){
+	hasil, err:= s.data.UpdateDataUser(ctx, singleTesting, ID)
 	if err != nil{
-		return errors.Wrap(err, "[SERVICE][SKELETON][UpdateDataUser]")
+		return hasil, errors.Wrap(err, "[SERVICE][SKELETON][UpdateDataUser]")
+	}
+	return hasil, err
+}
+
+// DeleteDataUser ...
+func (s Service) DeleteDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) error {
+	err:= s.data.DeleteDataUser(ctx, singleTesting, ID)
+	if err != nil{
+		return errors.Wrap(err, "[SERVICE][SKELETON][DeleteDataUser]")
 	}
 	return err
 }

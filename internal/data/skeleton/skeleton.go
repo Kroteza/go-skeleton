@@ -43,8 +43,13 @@ const (
 	qInsertDataUser = `INSERT INTO testing_tsepty VALUES(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 				//INSERT INTO (TABLE NAME) VALUES(COLUMN1, COLUMN2, ...)
 	
-	updateDataUser = `UpdateDatauser`
-	qUpdateDataUser = `UPDATE testqlx.Stmt`
+	updateDataUser = `UpdateDataUser`
+	qUpdateDataUser = `UPDATE testing_tsepty SET Nama = ?, Age = ?, Balance = ?, Balance_After_Tax = ?,
+						Description = ?, Date_Added = CURRENT_TIMESTAMP WHERE ID = ?`
+
+	deleteDataUser = `DeleteDataUser`
+	qDeleteDataUser = `DELETE FROM testing_tsepty
+						WHERE ID = ? `
 )
 
 // Add queries to key value order to be initialized as prepared statements
@@ -56,7 +61,7 @@ var (
 		{getDataByBalance, qGetDataByBalance},
 		{insertDataUser, qInsertDataUser},
 		{updateDataUser, qUpdateDataUser},
-	
+		{deleteDataUser, qDeleteDataUser},
 	}
 )
 //test
@@ -169,10 +174,20 @@ func (d Data) InsertDataUser(ctx context.Context, singleTesting testingEntity.Te
 }
 
 // UpdateDataUser ...
-func (d Data) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing) error {
+func (d Data) UpdateDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) (testingEntity.Testing, error) {
 	_, err:= d.stmt[updateDataUser].ExecContext(ctx,
 	singleTesting.Nama,
 	singleTesting.Age,
-	)
+	singleTesting.Balance,
+	singleTesting.BalanceAfterTax,
+	singleTesting.Description,
+	ID)
+	return singleTesting, err
+}
+
+// DeleteDataUser ...
+func (d Data) DeleteDataUser(ctx context.Context, singleTesting testingEntity.Testing, ID string) error {
+	_, err:= d.stmt[deleteDataUser].ExecContext(ctx,
+	ID)
 	return err
 }
